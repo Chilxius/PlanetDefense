@@ -25,7 +25,8 @@
 
 PImage planetPic[] = new PImage[8];
 PImage planetPicSmall[] = new PImage[8];
-PImage asteroid, big, small;
+PImage asteroid, big, small, crack;
+PImage ring;
 float [][] starPos = new float[2][500];
 int planet = int(random(8));
 boolean laserOn = true;
@@ -34,6 +35,7 @@ int laserRecharge = 0;
 ArrayList<Meteor> meteors = new ArrayList<Meteor>();
 ArrayList<Meteor> swarm = new ArrayList<Meteor>();
 ArrayList<Explosion> bursts = new ArrayList<Explosion>();
+ArrayList<Crack> cracks = new ArrayList<Crack>();
 
 int planetHealth = 10;
 boolean gameOver = false;
@@ -42,7 +44,7 @@ float score = 0;
 
 int gameTimer = 20000;
 
-Score [] highScores = new Score[10];
+Score [] highScores = new Score[50];
 boolean typingName = false;
 char qwerty [] = {'Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M','_'};
 int typeTimer = 0;
@@ -77,6 +79,10 @@ void setup()
   big.resize(300,0);
   small = loadImage("rock.png");
   small.resize(50,0);
+  crack = loadImage("crack2.png");
+  crack.resize(85,0);
+  ring = loadImage("ring.png");
+  ring.resize(400,0);
   
   //Set Star positions
   for( int i = 0; i < starPos[0].length; i++ )
@@ -128,7 +134,8 @@ void displayScores()
   fill(0,200,0);
   textSize(height/20);
   tint(255);
-  for( int i = 0; i < highScores.length; i++ )
+  //for( int i = 0; i < highScores.length; i++ )
+  for( int i = 0; i < 10; i++ )
   {
     textAlign(RIGHT);
     text(highScores[i].name+"   ",width/2,height/11.0*(i+1));
@@ -294,13 +301,27 @@ void drawScore()
 
 void drawPlanet()
 {
-  tint(255,(25.0*planetHealth),(25.0*planetHealth));
+  tint(255,(35.0*planetHealth),(35.0*planetHealth));
   image(planetPic[planet], width/2,height/2);
+  for( Crack c: cracks )
+    c.drawCrack();
+  if( planet == 5 )
+    image(ring,width/2,height/2);
+  //push();
+  //tint(0);
+  //translate(width/2,height/2);
+  //for(int i = planetHealth; i < 10; i+=2 )
+  //{
+  //  rotate(TWO_PI/2.5);
+  //  image(crack,0,70);
+  //}
+  //pop();
 }
 
-void damagePlanet( int damage )
+void damagePlanet( int damage, float angle )
 {
   planetHealth-=damage;
+  cracks.add( new Crack( angle ) );
   if(planetHealth<=0)
   {
     gameOver = true;
@@ -450,6 +471,9 @@ void reset()
   meteors = new ArrayList<Meteor>();
   for( int i = 0; i < 3; i++)
     meteors.add( new Meteor() );
+  cracks = new ArrayList<Crack>();
+  //for( int i = cracks.size(); i > 0; i-- )
+  //  cracks.remove(i-1);
 }
 
 void mousePressed()

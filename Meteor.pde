@@ -57,9 +57,9 @@ class Meteor
     {
       destroyed = true;
       if(!bigOne)
-        damagePlanet(1);
+        damagePlanet(1, rotation);
       else
-        damagePlanet(9);
+        damagePlanet(9, rotation);
     }
     push();
       translate(width/2,height/2);
